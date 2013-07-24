@@ -1,0 +1,391 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+	<head>
+
+	 <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+	 <?php  echo $this->headLink()->appendStylesheet($this->basePath() . '/css/bootstrap-responsive.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/style.css')
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') ?>
+
+        <!-- Scripts -->
+	 <?php echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+                                      ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+                                      ->prependFile($this->basePath() . '/js/jquery.min.js') ?>
+
+
+
+	</head>
+
+
+	<script type="text/javascript">
+
+	$(function(){
+
+
+		var top = $('div[class="navbar navbar-fixed-top"]').height();
+		var body = $(window).height();
+		desiredHeight = body-top-100;
+
+		$('div[name="content"]').css("min-height", desiredHeight );
+		$('div[name="property_pane"]').css("min-height", desiredHeight );
+
+		$(window).resize(function() {
+			var top = $('div[class="navbar navbar-fixed-top"]').height();
+			var body = $(window).height();
+			desiredHeight = body-top-100;
+
+			$('div[name="content"]').css("min-height", desiredHeight );
+			$('div[name="property_pane"]').css("min-height", desiredHeight );
+		});
+
+		$.getJSON('/member/getsessionajax', function(data) {
+			//alert(data['tab']); alert(data['property_id']);
+
+			//$.each(data, function(key, val) { alert(key+'='+val);});
+			//alert(data['tab']);
+			$('a[name="'+data['tab']+'"]').parent().attr('class','active');
+
+			var a1 = $('a[class="btn btn-danger"]');
+			a1.attr('class','btn btn-primary');
+
+			var a2 = $('a[class="btn btn-danger dropdown-toggle"]');
+			a2.attr('class','btn btn-primary dropdown-toggle');
+
+
+			var b1 = $('div#property[property_id="'+data['property_id']+'"]').find('a[class="btn btn-primary"]')
+			b1.attr('class','btn btn-danger')
+
+			var b2 = $('div#property[property_id="'+data['property_id']+'"]').find('a[class="btn btn-primary dropdown-toggle"]')
+			b2.attr('class','btn btn-danger dropdown-toggle');
+
+
+		});
+
+		//+ clicked tab
+
+		$('a[name$="tab"]').bind('click',function(){
+			// update session
+			var tab  		= $(this).attr('name');
+			var property_id = $('div#property a[class="btn btn-danger"]').parent().parent().attr('property_id');
+
+
+			$.ajax({
+				type:"POST",
+				url:"/member/updatesessionajax",
+				data:{ tab: tab,property_id: property_id },
+				async:false,
+				success:function(result){
+
+				}
+			});
+
+		});
+
+		//- clicked tab
+
+		//+ clicked property
+
+		$(document).on('click','div#property',function(){
+
+			// update session
+
+			// close all popovers
+			$('input[name$="_display_input"]').popover('hide');
+
+			var a1 = $('a[class="btn btn-danger"]');
+			a1.attr('class','btn btn-primary');
+
+			var a2 = $('a[class="btn btn-danger dropdown-toggle"]');
+			a2.attr('class','btn btn-primary dropdown-toggle');
+
+			var b1 = $(this).find('[class="btn btn-primary"]');
+			b1.attr('class','btn btn-danger');
+
+			var b2 = $(this).find('[class="btn btn-primary dropdown-toggle"]');
+			b2.attr('class','btn btn-danger dropdown-toggle');
+
+			var tab  		= $('li[class="active"] a').attr('name');
+			var property_id = $('div#property a[class="btn btn-danger"]').parent().parent().attr('property_id');
+
+			$.ajax({
+				type:"POST",
+				url:"/member/updatesessionajax",
+				data:{ tab: tab,property_id: property_id },
+				success:function(result){
+
+				}
+			});
+
+
+		});
+
+        //- end clicked property
+
+
+
+		$('.icon-search').bind('click',function(){
+			alert('perform search');
+		});
+
+
+
+		//+ adding property
+
+		$('button#add_property').bind('click',function(){
+
+			 property_name = $('input#property_name').val();
+
+			$.ajax({
+				type:"POST",
+				url:"/property/addingpropertyajax",
+				data:{ property_name: property_name},
+				success:function(result){
+
+					if( result != 0){
+
+						var a1 = $('a[class="btn btn-danger"]');
+						a1.attr('class','btn btn-primary');
+
+						var a2 = $('a[class="btn btn-danger dropdown-toggle"]');
+						a2.attr('class','btn btn-primary dropdown-toggle');
+
+						$('div[name="property_pane"]').append(result);
+
+						var tab  		= $('li[class="active"] a').attr('name');
+						var property_id = $('div#property a[class="btn btn-danger"]').parent().parent().attr('property_id');
+
+						$.ajax({
+							type:"POST",
+							url:"/member/updatesessionajax",
+							data:{ tab: tab,property_id: property_id },
+							async:false,
+							success:function(result){
+
+							}
+						});
+
+						location.reload();
+
+					}else{
+						$('div#alert_box p#property_name').html('Property named '+property_name+' already exist');
+						$('div#alert_box').modal('show');
+
+					}
+
+
+
+
+				}
+			});
+
+			$('div#add_property').modal('hide')
+
+		});
+
+		$('div#add_property').on('hidden', function () {
+			//delete value in input field
+			$('input#property_name').val('');
+		})
+
+		//- end adding property
+
+
+
+        //+ deletting property
+
+
+        $(document).on('click','a#delete_property',function(){
+            var property_id   = $(this).attr('property_id');
+            var property_name = $(this).attr('property_name');
+
+            $('button#delete_property').attr('property_id',property_id);
+
+            $('div#remove_property p#property_name').append('Are you sure to delete "'+property_name+'"?');
+			$('div#remove_property').modal('show');
+
+        });
+
+
+        $('button#delete_property').bind('click',function(){
+       	 	var property_id   = $(this).attr('property_id');
+
+            $.ajax({
+				type:"POST",
+				url:"/property/delettingpropertyajax",
+				data:{ property_id: property_id},
+				success:function(result){
+
+				$('div#property[property_id="'+property_id+'"]').remove();
+
+				}
+			});
+
+          	 $('div#remove_property').modal('hide')
+        });
+
+
+        $('div#remove_property').on('hidden', function () {
+			//delete value in input field
+        	$('p#property_name').html('');
+		})
+
+		//- end deletting property
+
+	});
+
+	</script>
+
+	<body>
+
+		<div class="navbar navbar-fixed-top">
+
+            <div class="navbar-inner">
+                <div class="container">
+
+                    <div class="nav-collapse collapse">
+
+		 				<ul class="nav nav-tabs">
+  							<li>			   <a name="property_tab" href="<?php echo $this->url('member',array('action'=>'property'));?>"><?php echo $this->translate('Properties') ?></a></li>
+							<li>			   <a name="unit_tab"     href="<?php echo $this->url('member',array('action'=>'units'));?>"><?php echo $this->translate('Units') ?></a></li>
+							<li>			   <a name="photo_tab" 	  href="<?php echo $this->url('member',array('action'=>'photos'));?>"><?php echo $this->translate('Photos') ?></a></li>
+							<li>			   <a name="video_tab"	  href="<?php echo $this->url('member',array('action'=>'videos'));?>"><?php echo $this->translate('Videos') ?></a></li>
+							<li>   			   <a name="report_tab"   href="<?php echo $this->url('member',array('action'=>'reports'));?>"><?php echo $this->translate('Reports') ?></a></li>
+							<li>			   <a name="account_tab"  href="<?php echo $this->url('member',array('action'=>'account'));?>"><?php echo $this->translate('Account settings') ?></a></li>
+							<li>			   <a href="<?php echo $this->url('member',array('action'=>'logout'));?>"><?php echo $this->translate('Log out') ?></a></li>
+                        </ul>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="container-fluid">
+
+  			<div class="row-fluid">
+    			<div name="property_pane" class="span3" style='background-color: #DDDDDD;'>
+
+    				<div class="row-fluid">
+    					<div class="span12" style='background-color: #DDDfff;'>
+        				<p class="text-right">Properties</p>
+        				</div>
+        			</div>
+        			<div id="searchbox" class="row-fluid">
+	    				<div class="input-append" style="width:93% ">
+						    <input type="text" class="span10">
+						    <span class="add-on"><i class="icon-search"></i></span>
+						    <span class="add-on"><i class="icon-plus" href="#add_property" data-toggle="modal"></i></span>
+	 				    </div>
+	 				</div>
+	 				<?php
+	 				 	foreach((array)$properties as $property){
+					?>
+					<div class="row-fluid" id="property" property_id="<?php echo $property['property_id']; ?>" >
+
+						<div class="btn-group" style="width:80%">
+
+								  <a class="btn btn-primary" style="width:90%">
+								  	<i class="icon-home icon-white"></i><?php echo $property['property_name']; ?>
+								  </a>
+								  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" style="width: 10%">
+								  	<span class="caret"></span>
+								  </a>
+
+								  <ul class="dropdown-menu pull-right">
+								    <li><a id="delete_property" property_id="<?php echo $property['property_id'] ?>" property_name="<?php echo $property['property_name'] ?>"><i class="icon-trash"></i>Delete</a></li>
+								  </ul>
+						</div>
+	 				</div>
+	 				<?php
+	 				 	}
+	 				?>
+
+      				<!--Sidebar content-->
+    			</div>
+    			<div name='content' class="span9" style='background-color: #EEEDDD;'>
+      				<!--Body content-->
+      				 <?php echo $this->content; ?>
+    			</div>
+  			</div>
+		</div>
+
+
+
+	</body>
+
+
+<!-- start adding property modal box -->
+
+	<div id="add_property" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-header">
+    		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    		<h3 id="myModalLabel">Add property</h3>
+  		</div>
+  		<div class="modal-body">
+    		Property Name:<input id="property_name" type="text" class="span5">
+  		</div>
+	  	<div class="modal-footer">
+	    	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	    	<button id="add_property" class="btn btn-primary">Add property</button>
+	  	</div>
+	</div>
+
+<!-- end adding property modal box -->
+
+<!-- start deleting property modal box -->
+
+	<div id="remove_property" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-header">
+    		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    		<h3 id="myModalLabel">Delete property</h3>
+  		</div>
+  		<div class="modal-body">
+  			<p id="property_name"></p>
+
+  		</div>
+	  	<div class="modal-footer">
+	    	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	    	<button id="delete_property" class="btn btn-primary">Delete property</button>
+	  	</div>
+	</div>
+
+<!-- end deleting property modal box -->
+
+<!-- start deleting property modal box -->
+
+	<div id="alert_box" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  		<div class="modal-header">
+    		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    		<h3 id="myModalLabel">Error</h3>
+  		</div>
+  		<div class="modal-body">
+  			<p id="property_name"></p>
+
+  		</div>
+	  	<div class="modal-footer">
+	    	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+	  	</div>
+	</div>
+
+<!-- end deleting property modal box -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

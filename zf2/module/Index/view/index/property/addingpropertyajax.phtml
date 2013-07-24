@@ -1,0 +1,13 @@
+<div class="row-fluid" id="property" property_id="<?php echo $property_id; ?>" >
+	<div class="btn-group" style="width:80%">
+		<a class="btn btn-danger" style="width: 90%">
+			<i class="icon-home icon-white"></i><?php echo $property_name; ?>
+			</a>
+		<a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" style="width: 10%">
+			<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu  pull-right">
+			<li><a id="delete_property" property_id="<?php echo $property_id?>" property_name="<?php echo $property_name?>"><i class="icon-trash"></i> Delete</a></li>
+		</ul>
+	</div>
+</div>

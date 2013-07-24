@@ -1,0 +1,1010 @@
+<script type="text/javascript">
+
+
+
+
+$(function(){
+
+	function updatePurchaseinfo()
+	{
+		 buying_cost = $('input[name="property_buyingcost_display_input"]').val();
+		 initimprove = $('input[name="property_initimprove_display_input"]').val()
+
+         buying_cost = buying_cost.substring(1, buying_cost.length);
+		 initimprove = initimprove.substring(1, initimprove.length);
+
+		 initial_cost = parseInt(initimprove)  + parseInt(buying_cost);
+         $('input[name="property_initcost_display_input"]').val('$'+initial_cost);
+	}
+
+
+	$.getJSON('/member/getsessionajax', function(data) {
+		if( data['tab'] == 'property_tab'){
+			$.getJSON('/property/getpropertytabajax', function(property){
+
+				$('input[name="property_street"]').val(property['address']['street']);
+				$('input[name="property_city"]').val(property['address']['city']);
+				$('input[name="property_state"]').val(property['address']['state']);
+				$('input[name="property_zip"]').val(property['address']['zip']);
+				$('input[name="property_country"]').val(property['address']['country']);
+
+				$('input[name="property_mls_display_input"]').val(property['address']['mls']);
+				$('input[name="property_style_display_input"]').val(property['address']['style']);
+				$('input[name="property_squarefeet_display_input"]').val(property['address']['squarefeet']);
+				$('input[name="property_lotsize_display_input"]').val(property['address']['lotsize']);
+				$('input[name="property_yearbuilt_display_input"]').val(property['address']['yearbuilt']);
+				$('input[name="property_lastremodel_display_input"]').val(property['address']['lastremodel']);
+				$('input[name="property_parking_display_input"]').val(property['address']['parking']);
+				$('input[name="property_hoa_display_input"]').val('$'+property['address']['hoa']);
+			});
+		}
+	});
+
+	//+ update info for property tab
+	$(document).on('click','div#property',function(){
+		$.getJSON('/member/getsessionajax', function(data) {
+
+			if(data['tab'] == 'property_tab'){
+
+				$.getJSON('/property/getpropertytabajax', function(property){
+
+					$('input[name="property_street"]').val(property['address']['street']);
+					$('input[name="property_city"]').val(property['address']['city']);
+					$('input[name="property_state"]').val(property['address']['state']);
+					$('input[name="property_zip"]').val(property['address']['zip']);
+					$('input[name="property_country"]').val(property['address']['country']);
+
+					$('input[name="property_mls_display_input"]').val(property['address']['mls']);
+					$('input[name="property_style_display_input"]').val(property['address']['style']);
+					$('input[name="property_squarefeet_display_input"]').val(property['address']['squarefeet']);
+					$('input[name="property_lotsize_display_input"]').val(property['address']['lotsize']);
+					$('input[name="property_yearbuilt_display_input"]').val(property['address']['yearbuilt']);
+					$('input[name="property_lastremodel_display_input"]').val(property['address']['lastremodel']);
+					$('input[name="property_parking_display_input"]').val(property['address']['parking']);
+					$('input[name="property_hoa_display_input"]').val('$'+property['address']['hoa']);
+
+				});
+			}
+
+		});
+	});
+
+	//- end update info for property tab
+
+
+
+
+	$('input[name="property_street"]').bind('keyup',function(){
+		var street = $(this).val();
+		$.ajax({
+			type:"POST",
+			url:"/property/updatestreetajax",
+			data:{street:street},
+			success:function(result){
+
+			}
+		});
+	});
+
+
+	$('input[name="property_city"]').bind('keyup',function(){
+		var city = $(this).val();
+		$.ajax({
+			type:"POST",
+			url:"/property/updatecityajax",
+			data:{city:city},
+			success:function(result){
+
+			}
+		});
+	});
+
+	$('input[name="property_state"]').bind('keyup',function(){
+		var state = $(this).val();
+
+		$.ajax({
+			type:"POST",
+			url:"/property/updatestateajax",
+			data:{state:state},
+			success:function(result){
+
+			}
+		});
+	});
+
+	$('input[name="property_zip"]').bind('keyup',function(){
+		var zip = $(this).val();
+
+		$.ajax({
+			type:"POST",
+			url:"/property/updatezipajax",
+			data:{zip:zip},
+			success:function(result){
+
+			}
+		});
+	});
+
+	$('input[name="property_country"]').bind('keyup',function(){
+		var country = $(this).val();
+
+		$.ajax({
+			type:"POST",
+			url:"/property/updatecountryajax",
+			data:{country:country},
+			success:function(result){
+
+			}
+		});
+	});
+	///
+
+	//+	mls input
+	$('input[name="property_mls_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'MLS#',
+	    content: function() {
+	    	$('input[name$="_display_input"][name!="property_mls_display_input"]').popover('hide');
+			return $('div[name="property_mls_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_mls_save"]',function(){
+
+		var mls = $('input[name="property_mls_input"]').val();
+
+		$.ajax({
+			type:"POST",
+			url:"/property/updatemlsajax",
+			async:false,
+			data:{mls:mls},
+			success:function(result){
+				$('input[name="property_mls_display_input"]').val(mls);
+				$('input[name="property_mls_display_input"]').popover('hide');
+			}
+		});
+
+	});
+
+	$(document).on('click','button[name="property_mls_cancel"]',function(){
+			$('input[name="property_mls_display_input"]').popover('hide');
+	});
+	//- mls input
+
+	//+ style input
+	$('input[name="property_style_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Style',
+	    content: function() {
+	    	$('input[name$="_display_input"][name!="property_style_display_input"]').popover('hide');
+			return $('div[name="property_style_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_style_save"]',function(){
+		var style = $('input[name="property_style_input"]').val();
+
+		$.ajax({
+			type:"POST",
+			url:"/property/updatestyleajax",
+			async:false,
+			data:{style:style},
+			success:function(result){
+				$('input[name="property_style_display_input"]').val(style);
+				$('input[name="property_style_display_input"]').popover('hide');
+			}
+		});
+	});
+
+	$(document).on('click','button[name="property_style_cancel"]',function(){
+			$('input[name="property_style_display_input"]').popover('hide');
+	});
+	//- style input
+
+	//+ squarefeet input
+	$('input[name="property_squarefeet_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Square Feet',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_squarefeet_display_input"]').popover('hide');
+		  return $('div[name="property_squarefeet_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_squarefeet_save"]',function(){
+		var squarefeet = $('input[name="property_squarefeet_input"]').val();
+		temp = squarefeet.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( $.isNumeric(temp) || (temp.length==0) ) { //valid input
+			squarefeet = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updatesquarefeetajax",
+				async:false,
+				data:{squarefeet:squarefeet},
+				success:function(result){
+					$('input[name="property_squarefeet_display_input"]').val(squarefeet);
+					$('input[name="property_squarefeet_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+squarefeet+'" is invalid for square feet');
+			$('div#alert_box').modal('show');
+		}
+	});
+
+	$(document).on('click','button[name="property_squarefeet_cancel"]',function(){
+		$('input[name="property_squarefeet_display_input"]').popover('hide');
+	});
+	//- squarefeet input
+
+	//+ lotsize input
+	$('input[name="property_lotsize_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Lot Size',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_lotsize_display_input"]').popover('hide');
+		  return $('div[name="property_lotsize_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_lotsize_save"]',function(){
+		var lotsize = $('input[name="property_lotsize_input"]').val();
+		temp = lotsize.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( $.isNumeric(temp) || (temp.length==0) ) { //valid input
+			lotsize = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updatelotsizeajax",
+				async:false,
+				data:{lotsize:lotsize},
+				success:function(result){
+					$('input[name="property_lotsize_display_input"]').val(lotsize);
+					$('input[name="property_lotsize_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+lotsize+'" is invalid for lot size');
+			$('div#alert_box').modal('show');
+		}
+
+	});
+
+	$(document).on('click','button[name="property_lotsize_cancel"]',function(){
+		$('input[name="property_lotsize_display_input"]').popover('hide');
+	});
+	//- lotsize input
+
+	//+ yearbuilt input
+	$('input[name="property_yearbuilt_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Year Built',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_yearbuilt_display_input"]').popover('hide');
+		  return $('div[name="property_yearbuilt_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_yearbuilt_save"]',function(){
+
+		var yearbuilt = $('input[name="property_yearbuilt_input"]').val();
+		temp = yearbuilt.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( ( $.isNumeric(temp) && (temp.length==4) ) || (temp.length==0) ) { //valid input
+			yearbuilt = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updateyearbuiltajax",
+				async:false,
+				data:{yearbuilt:yearbuilt},
+				success:function(result){
+					$('input[name="property_yearbuilt_display_input"]').val(yearbuilt);
+					$('input[name="property_yearbuilt_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+yearbuilt+'" is invalid for year built');
+			$('div#alert_box').modal('show');
+		}
+	});
+
+	$(document).on('click','button[name="property_yearbuilt_cancel"]',function(){
+		$('input[name="property_yearbuilt_display_input"]').popover('hide');
+	});
+	//- yearbuilt input
+
+	//+ lastremodel input
+	$('input[name="property_lastremodel_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Last Remodel',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_lastremodel_display_input"]').popover('hide');
+		  return $('div[name="property_lastremodel_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_lastremodel_save"]',function(){
+		var lastremodel = $('input[name="property_lastremodel_input"]').val();
+		temp = lastremodel.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( ( $.isNumeric(temp) && (temp.length==4) ) || (temp.length==0) ) { //valid input
+			lastremodel = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updatelastremodelajax",
+				async:false,
+				data:{lastremodel:lastremodel},
+				success:function(result){
+					$('input[name="property_lastremodel_display_input"]').val(lastremodel);
+					$('input[name="property_lastremodel_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+lastremodel+'" is invalid for last remodel');
+			$('div#alert_box').modal('show');
+		}
+	});
+
+	$(document).on('click','button[name="property_lastremodel_cancel"]',function(){
+		$('input[name="property_lastremodel_display_input"]').popover('hide');
+	});
+	//- lastremodel input
+
+	//+ parking input
+	$('input[name="property_parking_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Parking',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_parking_display_input"]').popover('hide');
+		  return $('div[name="property_parking_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_parking_save"]',function(){
+		var parking = $('input[name="property_parking_input"]').val();
+		temp = parking.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( $.isNumeric(temp) || (temp.length==0) ) { //valid input
+			parking = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updateparkingajax",
+				async:false,
+				data:{parking:parking},
+				success:function(result){
+					$('input[name="property_parking_display_input"]').val(parking);
+					$('input[name="property_parking_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+parking+'" is invalid for parking');
+			$('div#alert_box').modal('show');
+		}
+	});
+
+	$(document).on('click','button[name="property_parking_cancel"]',function(){
+		$('input[name="property_parking_display_input"]').popover('hide');
+	});
+	//- parking input
+
+	//+ hoa input
+	$('input[name="property_hoa_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'HOA',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_hoa_display_input"]').popover('hide');
+		  return $('div[name="property_hoa_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_hoa_save"]',function(){
+		var hoa = $('input[name="property_hoa_input"]').val();
+		temp = hoa.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( $.isNumeric(temp) || (temp.length==0) ) { //valid input
+			hoa = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updatehoaajax",
+				async:false,
+				data:{hoa:hoa},
+				success:function(result){
+					$('input[name="property_hoa_display_input"]').val('$'+hoa);
+					$('input[name="property_hoa_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+hoa+'" is invalid for hoa');
+			$('div#alert_box').modal('show');
+		}
+	});
+
+	$(document).on('click','button[name="property_hoa_cancel"]',function(){
+		$('input[name="property_hoa_display_input"]').popover('hide');
+	});
+	//- hoa input
+
+	//+ listing input
+	$('input[name="property_listingprice_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Listing Price',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_listingprice_display_input"]').popover('hide');
+		  return $('div[name="property_listingprice_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_listingprice_save"]',function(){
+		var listingprice = $('input[name="property_listingprice_input"]').val();
+		temp = listingprice.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( $.isNumeric(temp) || (temp.length==0) ) { //valid input
+			listingprice = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updatelistingpriceajax",
+				async:false,
+				data:{listingprice:listingprice},
+				success:function(result){
+					$('input[name="property_listingprice_display_input"]').val('$'+listingprice);
+					$('input[name="property_listingprice_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+listingprice+'" is invalid for Listing Price');
+			$('div#alert_box').modal('show');
+		}
+	});
+
+	$(document).on('click','button[name="property_listingprice_cancel"]',function(){
+		$('input[name="property_listingprice_display_input"]').popover('hide');
+	});
+	//- listing input
+
+	//+ init improvement input
+	$('input[name="property_initimprove_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Intial Improvement',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_initimprove_display_input"]').popover('hide');
+		  return $('div[name="property_initimprove_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_initimprove_save"]',function(){
+		var initimprove = $('input[name="property_initimprove_input"]').val();
+		temp = initimprove.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( $.isNumeric(temp) || (temp.length==0) ) { //valid input
+			initimprove = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updateinitimproveajax",
+				async:false,
+				data:{initimprove:initimprove},
+				success:function(result){
+					$('input[name="property_initimprove_display_input"]').val('$'+initimprove);
+
+					updatePurchaseinfo();
+
+
+					$('input[name="property_initimprove_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+initimprove+'" is invalid for Initial Improvments');
+			$('div#alert_box').modal('show');
+		}
+	});
+
+	$(document).on('click','button[name="property_initimprove_cancel"]',function(){
+		$('input[name="property_initimprove_display_input"]').popover('hide');
+	});
+	//- init improvement input
+
+	//+ purchase price input
+	$('input[name="property_purchaseprice_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Purchase Price',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_purchaseprice_display_input"]').popover('hide');
+		  return $('div[name="property_purchaseprice_popover"]').html();
+	    }
+	});
+
+	$(document).on('click','button[name="property_purchaseprice_save"]',function(){
+		var purchaseprice = $('input[name="property_purchaseprice_input"]').val();
+		temp = purchaseprice.replace(/\,/g, '');
+		temp = temp.replace(/\ /g, '');
+		if( $.isNumeric(temp) || (temp.length==0) ) { //valid input
+			purchaseprice = temp;
+			$.ajax({
+				type:"POST",
+				url:"/property/updatepurchasepriceajax",
+				async:false,
+				data:{purchaseprice:purchaseprice},
+				success:function(result){
+					$('input[name="property_purchaseprice_display_input"]').val('$'+purchaseprice);
+					$('input[name="property_purchaseprice_display_input"]').popover('hide');
+				}
+			});
+		}else{
+			$('div#alert_box p#property_name').html('The value "'+purchaseprice+'" is invalid for Purchase price');
+			$('div#alert_box').modal('show');
+		}
+	});
+
+	$(document).on('click','button[name="property_purchaseprice_cancel"]',function(){
+		$('input[name="property_purchaseprice_display_input"]').popover('hide');
+	});
+	//- purchase price input
+
+	//+ buying cost input
+	$('input[name="property_buyingcost_display_input"]').popover({
+	    html : true,
+	    placement : 'top',
+	    container: 'body',
+	    title: 'Buying Costs',
+	    content: function() {
+	      $('input[name$="_display_input"][name!="property_buyingcost_display_input"]').popover('hide');
+		  var output;
+	      $.ajax({
+				type:"POST",
+				url:"/propertybuyingcost/indexajax",
+				async:false,
+				success:function(result){
+					output = result;
+				}
+			});
+
+		  return output;
+
+	    }
+	});
+	//- buying cost input
+
+	///
+
+	$('button[name="property_map"]').bind('click',function(){
+
+		var street =	$('input[name="property_street"]').val();
+		var city   =	$('input[name="property_city"]').val();
+		var state  =	$('input[name="property_state"]').val();
+		var zip    = 	$('input[name="property_zip"]').val();
+		var country=	$('input[name="property_country"]').val();
+
+		window.open('https://maps.google.com/maps?q='+street+',+'+city+',+'+state+'+'+zip+'&t=m');
+
+
+	});
+
+
+
+});
+
+</script>
+
+
+<?php
+
+
+
+?>
+<div class="container-fluid">
+
+	<!-- address -->
+
+	<div name="address_row" class="row-fluid">
+
+		<div class="row-fluid">
+			<a class="">
+				<i name="address_icon" class="icon-minus-sign"></i>
+        		Address
+      		</a>
+		</div>
+
+		<div class="row-fluid">
+
+				<div class="span10" style="background-color: #eeeaa4">
+				<div class="row-fluid">
+					<div class="span6">Street<input type="text" class="input-small" style="width:100%" placeholder="Street" name="property_street"></div>
+					<div class="span6">City<input type="text" class="input-small" style="width:95%"  placeholder="City"   name="property_city"></div>
+				</div>
+				<div class="row-fluid ">
+					<div class="span3">State<input type="text" class="input-small" style="width:100%" placeholder="State"  name="property_state"></div>
+					<div class="span3">Zip<input type="text" class="input-small" style="width:100%" placeholder="Zip"    name="property_zip"></div>
+					<div class="span6">Country<input type="text" class="input-small" style="width:95%"  placeholder="Country"name="property_country"></div>
+				</div>
+				</div>
+				<div class="span2">
+					<button name="property_map" class="btn btn-large btn-primary" type="button" style="width:100%;height:100%">Map</button>
+				</div>
+
+		</div>
+
+	</div>
+
+	<!-- basic info -->
+
+	<div name="basic_info_row" class="row-fluid">
+
+		<div class="row-fluid">
+			<a class="" href="#basic_info">
+				<i name="basic_info_icon" class="icon-minus-sign"></i>
+        		Basic info
+      		</a>
+		</div>
+
+
+		<div class="row-fluid" id="basic_info">
+
+				<div class="span12" style="background-color: #eeeaa4;">
+					<div class="row-fluid">
+						<div class="span3">MLS#
+							<input type="text" class="input-small" style="width:100%" placeholder="MLS#" name="property_mls_display_input" readonly>
+						</div>
+						<div class="span3">Style
+							<input type="text" class="input-small" style="width:100%" placeholder="Style" name="property_style_display_input" readonly>
+						</div>
+						<div class="span3">Square Feet
+							<input type="text" class="input-small" style="width:100%" placeholder="Square feet" name="property_squarefeet_display_input" readonly>
+						</div>
+						<div class="span3">Lot Size
+							<input type="text" class="input-small" style="width:90%" placeholder="Lot size" name="property_lotsize_display_input" readonly>
+						</div>
+					</div>
+					<div class="row-fluid">
+						<div class="span3">Year Built
+							<input type="text" class="input-small" style="width:100%" placeholder="Year built" name="property_yearbuilt_display_input" readonly>
+						</div>
+						<div class="span3">Last Remodel
+							<input type="text" class="input-small" style="width:100%" placeholder="Last remodel" name="property_lastremodel_display_input" readonly>
+						</div>
+						<div class="span3">Parking
+							<input type="text" class="input-small" style="width:100%" placeholder="Parking" name="property_parking_display_input" readonly>
+						</div>
+						<div class="span3">HOA
+							<input type="text" class="input-small" style="width:90%" placeholder="HOA" name="property_hoa_display_input" readonly>
+						</div>
+					</div>
+					<div class="row-fluid">
+					&nbsp;
+					</div>
+				</div>
+
+		</div>
+
+	</div>
+
+	<!-- purchasing info -->
+
+	<div name="purchase_info_row" class="row-fluid">
+
+		<div class="row-fluid">
+			<a class="" href="#purchase_info">
+				<i name="purchase_info_icon" class="icon-minus-sign"></i>
+        		Purchase info
+      		</a>
+		</div>
+		<div class="row-fluid" id="purchase_info">
+
+				<div class="span12" style="background-color: #eeeaa4;">
+					<div class="row-fluid">
+						<div class="span2">Listing Price
+							<input type="text" class="input-small" style="width:100%" placeholder="Listing Price" name="property_listingprice_display_input" readonly>
+						</div>
+						<div class="span1" >
+							<div class="row-fluid" style="text-align:center">&nbsp;</div>
+							<div class="row-fluid" style="text-align:center">&nbsp;</div>
+						</div>
+						<div class="span2">Buying Costs
+							<input type="text" class="input-small" style="width:100%" placeholder="Buying Costs" name="property_buyingcost_display_input" readonly>
+						</div>
+						<div class="span1" >
+							<div class="row-fluid" style="text-align:center">&nbsp;</div>
+							<div class="row-fluid" style="text-align:center">+</div>
+						</div>
+						<div class="span2">Initial Improvments
+							<input type="text" class="input-small" style="width:100%" placeholder="Initial Improvments" name="property_initimprove_display_input" readonly>
+						</div>
+						<div class="span1" >
+							<div class="row-fluid" style="text-align:center">&nbsp;</div>
+							<div class="row-fluid" style="text-align:center">=</div>
+						</div>
+						<div class="span2">Initial Costs
+							<input type="text" class="input-small" style="width:90%" placeholder="Initial Costs" name="property_initcost_display_input" readonly>
+						</div>
+					</div>
+
+					<div class="row-fluid">
+						<div class="span2">Purchase Price
+							<input type="text" class="input-small" style="width:100%" placeholder="Purchase Price" name="property_purchaseprice_display_input" readonly>
+						</div>
+						<div class="span1" >
+							<div class="row-fluid" style="text-align:center">&nbsp;</div>
+							<div class="row-fluid" style="text-align:center">-</div>
+						</div>
+						<div class="span2">1'st Mortgage
+							<input type="text" class="input-small" style="width:100%" placeholder="1'st Mortgage" name="property_firstmortgage_display_input" readonly>
+						</div>
+						<div class="span1" >
+							<div class="row-fluid" style="text-align:center">&nbsp;</div>
+							<div class="row-fluid" style="text-align:center">-</div>
+						</div>
+						<div class="span2">2'nd Mortgage
+							<input type="text" class="input-small" style="width:100%" placeholder="2'nd Mortgage" name="property_secondmorgage_display_input" readonly>
+						</div>
+						<div class="span1" >
+							<div class="row-fluid" style="text-align:center">&nbsp;</div>
+							<div class="row-fluid" style="text-align:center">=</div>
+						</div>
+						<div class="span2">
+							<div class="row-fluid">
+								<div style="text-align:left">Down Payment</div>
+							</div>
+							<div class="row-fluid" style="text-align:center">
+								<input type="text" class="input-small" style="width:90%" placeholder="Down Payment" name="property_downpayment_display_input" readonly>
+							</div>
+						</div>
+						<div class="span1">
+							<div class="row-fluid" style="text-align:left">+</div>
+							<div class="row-fluid" style="text-align:center">&nbsp;</div>
+						</div>
+					</div>
+					<div class="row-fluid">
+						<div class="row-fluid">
+							<div class="span8" style="text-align:center">&nbsp;</div><!-- Purchase Price - 1'st mortgage - 2'nd mortgage + Buying costs + Initial improvments -->
+							<div class="span1" style="text-align:center">=</div>
+							<div class="span2">Initial cash invested</div>
+						</div>
+						<div class="row-fluid">
+							<div class="span9">&nbsp;</div>
+							<div class="span2">
+								<input type="text" class="input-small" style="width:90%" name="init_cash_invested" readonly>
+							</div>
+						</div>
+
+					</div>
+				</div>
+		</div>
+	</div>
+
+	<!-- popover for all input -->
+
+
+	<div name="property_mls_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_mls_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_mls_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_mls_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_style_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_style_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_style_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_style_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_squarefeet_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_squarefeet_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_squarefeet_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_squarefeet_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_lotsize_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_lotsize_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_lotsize_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_lotsize_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_yearbuilt_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_yearbuilt_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_yearbuilt_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_yearbuilt_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_lastremodel_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_lastremodel_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_lastremodel_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_lastremodel_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_parking_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_parking_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_parking_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_parking_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_hoa_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_hoa_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_hoa_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_hoa_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_listingprice_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_listingprice_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_listingprice_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_listingprice_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_initimprove_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_initimprove_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_initimprove_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_initimprove_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div name="property_purchaseprice_popover" style="display: none;">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<input type="text" class="input-small" style="width:90%" name="property_purchaseprice_input">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<button name="property_purchaseprice_cancel" class="btn btn-primary" type="button">Cancel</button>
+			</div>
+			<div class="span6">
+				<button name="property_purchaseprice_save" class="btn btn-primary" type="button">Save</button>
+			</div>
+		</div>
+
+	</div>
+
+
+	<!-- popover for all input -->
+
+
+
+
+
+
+
+
+
+
+
+
+</div>

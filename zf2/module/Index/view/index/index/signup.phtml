@@ -1,0 +1,128 @@
+<?php
+// module/Index/view/index/index/index.phtml:
+
+
+
+?>
+<div style="background-color: #AACCFF;width:100%;height:400px;padding-top:10px;padding-bottom:70px">
+
+	<div style="margin-left: auto;margin-right:auto;width:420px;height:380px;padding-top:0px">
+
+
+					<?php
+						$form = $this->form;
+						$form->prepare();
+						$form->setAttribute('action', $this->url('index', array('action' => 'signup')) );
+
+						echo $this->form()->openTag($form);
+					?>
+
+					<div style='margin-left: auto;margin-right:auto;width:305px;height:80px;background-color:#cccccc;padding-top:5px;padding-left:10px;padding-right:10px'>
+						<?php
+							$email = $form->get('email');
+							$email->setAttribute('style','width:290px;height:30px');
+						?>
+						<div style='height: 35px'>
+						<font color='red'>
+							<?php
+							$error = $this->formElementErrors($email);
+							echo ( strpos($error,"Value is required") > 0 ) ? "<ul><li>Email is requred</li></ul>" : $error  ;
+							?>
+						</font>
+						</div>
+						<div style='height: 35px'>
+							<?php echo $this->formInput($email);?>
+						</div>
+					</div>
+					<div style='margin-left: auto;margin-right:auto;width:305px;height:80px;background-color:#cccccc;padding-top:5px;padding-left:10px;padding-right:10px'>
+						<?php
+							$cemail = $form->get('cemail');
+							$cemail->setAttribute('style','width:290px;height:30px');
+						?>
+						<div style='height: 35px'>
+						<font color='red'>
+							<?php
+							$error = $this->formElementErrors($cemail);
+							echo ( strpos($error,"Value is required") > 0 ) ? "<ul><li>Confirm Email is requred</li></ul>" : $error  ;
+							?>
+						</font>
+						</div>
+						<div style='height: 35px'>
+							<?php echo $this->formInput($cemail);?>
+						</div>
+					</div>
+					<div style='margin-left: auto;margin-right:auto;width:305px;height:80px;background-color:#cccccc;padding-top:5px;padding-left:10px;padding-right:10px'>
+						<?php
+							$password = $form->get('password');
+							$password->setAttribute('style','width:290px;height:30px');
+						?>
+						<div style='height: 35px'>
+						<font color='red'>
+							<?php
+							$error = $this->formElementErrors($password);
+							echo ( strpos($error,"Value is required") > 0 ) ? "<ul><li>Password is requred</li></ul>" : $error  ;
+							?>
+						</font>
+						</div>
+						<div style='height: 35px'>
+							<?php echo $this->formInput($password);?>
+						</div>
+
+					</div>
+					<div style='margin-left: auto;margin-right:auto;width:305px;height:80px;background-color:#cccccc;padding-top:5px;padding-left:10px;padding-right:10px'>
+						<?php
+							$cpassword = $form->get('cpassword');
+							$cpassword->setAttribute('style','width:290px;height:30px');
+						?>
+						<div style='height: 35px'>
+						<font color='red'>
+							<?php
+							$error = $this->formElementErrors($cpassword);
+							echo ( strpos($error,"Value is required") > 0 ) ? "<ul><li>Confirm Password is requred</li></ul>" : $error  ;
+							?>
+						</font>
+						</div>
+							<?php echo $this->formInput($cpassword);?>
+
+
+					</div>
+					<div style='margin-left: auto;margin-right:auto;width:305px;height:60px;background-color:#cccccc;padding-top:5px;padding-left:10px;padding-right:10px'>
+						<?php
+							$submit = $form->get('submit');
+							$submit->setAttribute('style','width:302px;height:30px');
+							echo $this->formInput($submit);
+						?>
+					</div>
+
+					<div style='margin-left: auto;margin-right:auto;width:305px;background-color:#cccccc;padding:10px;overflow:auto'>
+						<div style='float:left;width:150px;height:30px;background-color:#3B5998;text-align:center;padding-top:5px'><font color='#ffffff'>Sign up with Facebook</font></div>
+						<div style='float:left;width:150px;height:30px;background-color:#9AE4E8;text-align:center;padding-top:5px'><font color='#ffffff'>Sign up with Twitter</font></div>
+					</div>
+
+					<?php echo $this->form()->closeTag() ?>
+
+
+
+
+
+
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

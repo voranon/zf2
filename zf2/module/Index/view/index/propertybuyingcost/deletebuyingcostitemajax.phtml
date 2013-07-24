@@ -1,0 +1,23 @@
+
+<?php
+	$total=0;
+	foreach($property_buyingcost_items as $property_buyingcost_item){
+?>
+	<tr buyingcost_item_id='<?= $property_buyingcost_item['item_id'] ?>'>
+		 <td><?= $property_buyingcost_item['item_text'] ?></td>
+		 <td style="text-align:right">$<?= $property_buyingcost_item['property_buyingcost_item_amount'] ?></td>
+		 <td style="text-align:center">
+		 	<button class="btn btn-danger btn-mini" type="button" name="delete_buyingcost_item" property_buyingcost_item_id='<?= $property_buyingcost_item['property_buyingcost_item_id'] ?>'>Delete</button>
+		 </td>
+	</tr>
+<?php
+	$total += $property_buyingcost_item['property_buyingcost_item_amount'];
+	}
+
+?>
+
+<tr>
+		<td>Total</td>
+		<td style="text-align:right" name="buyingcost_total">$<?= $total?></td>
+		<td style="text-align:center">&nbsp;</td>
+</tr>
